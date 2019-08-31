@@ -9,67 +9,59 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import tws.entity.Employee;
 import tws.repository.EmployeeMapper;
+import tws.service.EmployeeService;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/employees")
 public class EmployeeController {
 
     @Autowired
-    private EmployeeMapper employeeMapper;
+    private EmployeeService employeeService;
 
     @GetMapping("")
     public ResponseEntity<List<Employee>> getAll() {
-        return ResponseEntity.ok(employeeMapper.selectAll());
+        return ResponseEntity.ok(employeeService.queryEmployeeList());
     }
-
-    @GetMapping("/{id}")
-	public ResponseEntity<Object> queryEmployeeById(@PathVariable Integer id) {
-		if (id == null) {
-			return ResponseEntity.badRequest().build();
-		}
-		if (employeeMapper.queryEmployeeById(id) != null) {
-			return ResponseEntity.ok(employeeMapper.queryEmployeeById(id));
-		}else {
-			return ResponseEntity.notFound().build();
-		}
-	}
-	
+    
 	@PostMapping("")
 	public ResponseEntity<Object> createEmployee(@RequestBody Employee employee) {
-		if (employeeMapper.queryEmployeeById(employee.getId()) == null) {
-			return employeeMapper.insert(employee) == 1 ? ResponseEntity.created(null).build():ResponseEntity.badRequest().build();
-		}else {
-			return ResponseEntity.notFound().build();
-		}
-		
+		return employeeService.createEmployee(employee) ? ResponseEntity.created(null).build():ResponseEntity.badRequest().build();		
 	}
 	
-	@PutMapping("/{id}")
-	public ResponseEntity<Object> updateEmployee(@PathVariable Integer id,@RequestBody Employee employee) {
-		if (employeeMapper.queryEmployeeById(id) != null) {
-			employeeMapper.update(id,employee);
-			return ResponseEntity.ok().build();
-		}else {
-			return ResponseEntity.notFound().build();
-		}
-	}
 	
-	@DeleteMapping("/{id}")
-	public ResponseEntity<Object> deleteEmployee(@PathVariable Integer	id) {
-		if (id == null) {
-			return  ResponseEntity.badRequest().build();
-		}
-		if (employeeMapper.queryEmployeeById(id) != null) {
-			employeeMapper.deleteEmployeeById(id);
-			return ResponseEntity.ok().build();
-		}else {
-			return ResponseEntity.notFound().build();
-		}
-		
+	@GetMapping(path = "/")
+	public ResponseEntity<List<Employee>> queryCompaniesWithPageAndPageSize(@RequestParam Map<String, Integer> pageQuery){					
+		return ResponseEntity.ok(employeeService.queryEmployeesWithPage(pageQuery));
 	}
+//	@PutMapping("/{id}")
+//	public ResponseEntity<Object> updateEmployee(@PathVariable Integer id,@RequestBody Employee employee) {
+//		if (employeeMapper.queryEmployeeById(id) != null) {
+//			employeeMapper.update(id,employee);
+//			return ResponseEntity.ok().build();
+//		}else {
+//			return ResponseEntity.notFound().build();
+//		}
+//	}
+//	
+//	@DeleteMapping("/{id}")
+//	public ResponseEntity<Object> deleteEmployee(@PathVariable Integer	id) {
+//		if (id == null) {
+//			return  ResponseEntity.badRequest().build();
+//		}
+//		if (employeeMapper.queryEmployeeById(id) != null) {
+//			employeeMapper.deleteEmployeeById(id);
+//			return ResponseEntity.ok().build();
+//		}else {
+//			return ResponseEntity.notFound().build();
+//		}
+//		
+//	}
 }

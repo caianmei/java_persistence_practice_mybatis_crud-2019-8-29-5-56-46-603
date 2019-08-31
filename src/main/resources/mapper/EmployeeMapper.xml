@@ -1,31 +1,40 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="tws.repository.EmployeeMapper">
-    <select id="selectAll" resultType="tws.entity.Employee">
-        select * from `employee`;
-    </select>
-    
-    <select id="queryEmployeeById" parameterType="java.lang.Integer" resultType="tws.entity.Employee">
-        select * from `employee` where id = #{id};
-    </select>
-    
-    <insert id="insert" parameterType="tws.entity.Employee">
-        insert into `employee` values(#{employee.id},#{employee.name},#{employee.age});
-    </insert>
-    
-    <update id="update">
-      update `employee` set
-      <if test="employee.name != null and employee.name != '' ">
-        name = #{employee.name},
-      </if>
-       <if test="employee.age != null and employee.age != '' ">
-        age = #{employee.age}
-      </if>
-      where id = #{id}
-    </update>
-    
-     <delete id="deleteEmployeeById" parameterType="int">
-      delete from `employee` 
-      where id = #{id}
-    </delete>
+	<select id="selectAll" resultType="tws.entity.Employee">
+		select * from `employee`;
+	</select>
+
+	<select id="selectByPage" parameterType="java.util.Map" resultType="tws.entity.Employee">
+		SELECT *
+		FROM employee
+		ORDER BY id
+		OFFSET #{map.startIndex} ROWS FETCH NEXT #{map.pageSize} ROWS ONLY;
+	</select>
+	
+	<select id="queryEmployeeById" parameterType="java.lang.Integer"
+		resultType="tws.entity.Employee">
+		select * from `employee` where id = #{id};
+	</select>
+
+	<insert id="insert" parameterType="tws.entity.Employee">
+		insert into `employee`
+		values(#{employee.id},#{employee.name},#{employee.age});
+	</insert>
+
+	<update id="update">
+		update `employee` set
+		<if test="employee.name != null and employee.name != '' ">
+			name = #{employee.name},
+		</if>
+		<if test="employee.age != null and employee.age != '' ">
+			age = #{employee.age}
+		</if>
+		where id = #{id}
+	</update>
+
+	<delete id="deleteEmployeeById" parameterType="int">
+		delete from `employee`
+		where id = #{id}
+	</delete>
 </mapper>
